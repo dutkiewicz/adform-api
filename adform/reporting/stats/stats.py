@@ -2,7 +2,7 @@ from ...base import Base
 
 
 class Stats(Base):
-    endpoint = 'https://api.adform.com/v1/reportingstats/agency/reportdata'
+    endpoint = '/v1/reportingstats/agency/reportdata'
     body = {
         'dimensions': [],
         'metrics': [],

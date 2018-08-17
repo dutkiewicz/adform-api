@@ -2,14 +2,13 @@ import requests
 
 
 class Connection:
-    """Log in client id to https://id.adform.com/sts/connect/token
+    """
     TODO zrobić strategię buildera
     """
 
     endpoint = 'https://id.adform.com/sts/connect/token'
     access_token = None
     expires_in = None
-    scope = []
 
     def __init__(self, client_id, client_secret, *scope):
         self.scope = scope
