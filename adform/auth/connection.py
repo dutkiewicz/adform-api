@@ -18,9 +18,13 @@ class Connection:
             'grant_type': 'client_credentials',
             'scope': self.scope
         }
+        self.authorize()
 
     def authorize(self):
         response = requests.post(self.endpoint, data=self.body).json()
         self.access_token = response['access_token']
         self.expires_in = response['expires_in']
+        return self.access_token
+
+    def __repr__(self):
         return self.access_token
