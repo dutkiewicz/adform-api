@@ -42,7 +42,7 @@ class StatsAsync(Base):
 
         return self
 
-    def create_operation(self):
+    def create(self):
         if not self.body["filter"]["date"]["from"]:
             raise ValueError("Report start time must be specified!")
         if not self.body["filter"]["date"]["to"]:
@@ -55,11 +55,11 @@ class StatsAsync(Base):
         else:
             raise RuntimeError(response.status_code, response.content)
 
-    def get_report(self, location):
+    def get(self, location):
         url = urljoin(self.base_url, location)
         return requests.get(url, headers=self._headers).json()
 
-    def delete_report(self, location):
+    def delete(self, location):
         url = urljoin(self.base_url, location)
         response = requests.delete(url, headers=self._headers)
 
