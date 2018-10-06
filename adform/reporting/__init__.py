@@ -1,1 +1,1 @@
-from . import metadata, stats, stats_async
+from . import metadata, stats_async
