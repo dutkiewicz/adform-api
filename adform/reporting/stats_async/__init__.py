@@ -1,1 +1,1 @@
-from .stats_async import *
+from .stats_async import StatsAsync

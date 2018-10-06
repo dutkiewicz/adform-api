@@ -1,13 +1,9 @@
 import datetime
-from urllib.parse import urljoin
 
-import requests
-
-from ...base import Base
+from adform.base import Base
 
 
 class StatsAsync(Base):
-    endpoint = "/v1/buyer/stats/data"
     body = {
         "dimensions": [],
         "metrics": [],
@@ -32,38 +28,51 @@ class StatsAsync(Base):
         return self
 
     def daterange(self, start, end):
-        if not isinstance(start, datetime.datetime):
-            raise TypeError("Start date must be datetime object!")
-        if not isinstance(end, datetime.datetime):
-            raise TypeError("End date must be datetime object!")
+        """Accepts datetime objects or string formatted YYYY-MM-DD"""
+        if isinstance(start, datetime.datetime):
+            pass
+        elif isinstance(start, str):
+            start = datetime.datetime.strptime(start, '%Y-%M-%d')
+        else:
+            raise TypeError("Start date must be datetime object or string formatted YYYY-MM-DD!")
+
+        if isinstance(end, datetime.datetime):
+            pass
+        elif isinstance(end, str):
+            end = datetime.datetime.strptime(end, '%Y-%M-%d')
+        else:
+            raise TypeError("End date must be datetime object or string formatted YYYY-MM-DD!")
 
         self.body["filter"]["date"]["to"] = end.isoformat()
         self.body["filter"]["date"]["from"] = start.isoformat()
 
         return self
 
-    def create(self):
+    def create_data(self):
         if not self.body["filter"]["date"]["from"]:
             raise ValueError("Report start time must be specified!")
         if not self.body["filter"]["date"]["to"]:
             raise ValueError("Report end time must be specified!")
 
-        response = requests.post(self.request_url, headers=self._headers, json=self.body)
+        endpoint = '/v1/buyer/stats/data'
+        response = self._post(endpoint)
 
-        if response.status_code == 202:
-            return response.headers
-        else:
-            raise RuntimeError(response.status_code, response.content)
+        self.operation_location = response.headers['operation-location']
+        self.location = response.headers['location']
+        return self
 
-    def get(self, location):
-        url = urljoin(self.base_url, location)
-        return requests.get(url, headers=self._headers).json()
+    def get_data(self, id=None):
+        endpoint = '/v1/buyer/data/{}'.format(id) if id else self.location
+        return self._get(endpoint).json()
 
-    def delete(self, location):
-        url = urljoin(self.base_url, location)
-        response = requests.delete(url, headers=self._headers)
+    def delete_data(self, id=None):
+        endpoint = '/v1/buyer/data/{}'.format(id) if id else self.location
+        return self._delete(endpoint)
 
-        if response.status_code == 204:
-            return response.status_code
-        else:
-            raise RuntimeError(response.status_code, response.content)
+    def get_operation(self, id=None):
+        endpoint = '/v1/buyer/operations/{}'.format(id) if id else self.operation_location
+        return self._get(endpoint).json()
+
+    def delete_operation(self, id=None):
+        endpoint = '/v1/buyer/operations/{}'.format(id) if id else self.operation_location
+        return self._delete(endpoint)
