@@ -1,1 +1,1 @@
-from .connection import *
+from .authorize import Authorize
