@@ -9,6 +9,6 @@ setup(name='adform',
       license='MIT',
       packages=find_packages(),
       install_requires=[
-          'requests==2.19.1'
+          'requests==2.20.0'
       ],
       python_requires='>=3')
